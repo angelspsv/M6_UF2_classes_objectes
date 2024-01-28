@@ -9,7 +9,7 @@ function afegirCicle(){
     let numAlumnes = document.getElementById("cicle_alumnes").value;
     let abreviatura = document.getElementById("cicle_abr").value;
 
-    let cicle = new Cicle(nom, categoria, numAlumnes, this.abreviatura);
+    let cicle = new Cicle(nom, categoria, numAlumnes, abreviatura);
     cicle.toString();
     /*
     let cicle = {nom: nom, categoria: categoria, numAlumnes: numAlumnes, abreviatura: abreviatura}
@@ -36,26 +36,30 @@ function afegirCicle(){
     document.getElementById("editCicle").value=-1;
 }
 
-function afegirModul(){
-    let cicle = document.getElementById("modul_cicle").value;
-    let modul_nom = document.getElementById("modul_nom").value;
-    let modul_num = document.getElementById("modul_num").value;
-    let modul_hores = document.getElementById("modul_hores").value;
 
 
-    let modul = new Modul(cicle, modul_nom, modul_num, modul_hores);
-    modul.toString();
-    /*
-    let modul = {cicle: cicle, nom: modul_nom, num: modul_num, hores: modul_hores}
-    console.log(modul);
-    */
+function afegirModul() {
+    let cicleIndex = document.getElementById("modul_cicle").value;
+    let cicle = llistatCicles[cicleIndex];
 
-    //Printem la llista
-    printLlistat(llistatCicles);
+    if (cicle) {
+        let modul_nom = document.getElementById("modul_nom").value;
+        let modul_num = document.getElementById("modul_num").value;
+        let modul_hores = document.getElementById("modul_hores").value;
 
-    //Netegem els formularis
-    netejarFormularis();
+        let modul = new Modul(cicle, modul_nom, modul_num, modul_hores);
+        cicle.afegirModul(modul);
+
+        // Printar la llista después de añadir el módulo
+        printLlistat(llistatCicles);
+
+        // Netejar els formularis
+        netejarFormularis();
+    }
 }
+
+
+
 
 //botons per afegirCicle, afegirModul, editarCicle, eliminarCicle
 window.onload=function(){
@@ -69,13 +73,10 @@ window.onload=function(){
             alert("Selecciona un cicle per editar.");
         }
     });
+
     document.getElementById("btnRemoveCicle").addEventListener("click", function () {
         let editIndex = document.getElementById("editCicle").value;
-        if (editIndex !== "-1") {
-            removeCicle(editIndex);
-        } else {
-            alert("Selecciona un cicle per eliminar.");
-        }
+        removeCicle(editIndex);
     });
 }
 
@@ -114,26 +115,35 @@ function actualitzarSelector(){
     });
 }
 
+
 //Funció per eliminar un cicle
-function removeCicle(i) {
-    if (confirm("Segur que vols eliminar aquest cicle?")) {
-        llistatCicles.splice(i, 1);
-        printLlistat(llistatCicles);
-        actualitzarSelector();
-        netejarFormularis();
+function removeCicle(index) {
+    if (index >= 0 && index < llistatCicles.length) {
+        if (confirm("Segur que vols eliminar aquest cicle?")) {
+            llistatCicles.splice(index, 1);
+            printLlistat(llistatCicles);
+            actualitzarSelector();
+            netejarFormularis();
+        }
+    } else {
+        alert("Selecciona un cicle per eliminar.");
     }
 }
 
-
 //Funció per editar un cicle
-function editCicle(i){
-    document.getElementById("cicle_nom").value = llistatCicles[i].nom;
-    document.getElementById("cicle_categoria").value = llistatCicles[i].categoria;
-    document.getElementById("cicle_alumnes").value = llistatCicles[i].numAlumnes;
-    document.getElementById("cicle_abr").value = llistatCicles[i].abreviatura;
+function editCicle(index) {
+    if (index >= 0 && index < llistatCicles.length) {
+        document.getElementById("cicle_nom").value = llistatCicles[index].nom;
+        document.getElementById("cicle_categoria").value = llistatCicles[index].categoria;
+        document.getElementById("cicle_alumnes").value = llistatCicles[index].numAlumnes;
+        document.getElementById("cicle_abr").value = llistatCicles[index].abreviatura;
 
-    document.getElementById("editCicle").value=i;
+        document.getElementById("editCicle").value = index;
+    } else {
+        alert("Selecciona un cicle per editar.");
+    }
 }
+
 
 //Funció per netejar els formularis
 function netejarFormularis(){
